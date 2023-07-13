@@ -3,6 +3,7 @@ package me.brandonfowler.thoughtresume
 import android.content.Context
 import android.text.Editable
 import android.text.TextWatcher
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.View.OnClickListener
@@ -32,7 +33,7 @@ class ReminderListAdapter(context: Context, resource: Int, val items: ArrayList<
             }
         }
 
-        private val onDeleteClickListener: OnClickListener = OnClickListener {
+        private val onDeleteClickListener = OnClickListener {
             with (adapter) {
                 items.removeAt(position)
                 listener?.onUpdated()
@@ -46,9 +47,7 @@ class ReminderListAdapter(context: Context, resource: Int, val items: ArrayList<
             binding.deleteButton.setOnClickListener(onDeleteClickListener)
         }
 
-        fun setPosition(position: Int) {
-           if (position == this.position) return
-
+        fun updateValue(position: Int) {
             this.position = position
             binding.editText.setText(adapter.items[position])
         }
@@ -65,7 +64,7 @@ class ReminderListAdapter(context: Context, resource: Int, val items: ArrayList<
             holder.binding.root.tag = holder
         } else {
             holder = convertView.tag as ViewHolder
-            holder.setPosition(position)
+            holder.updateValue(position)
         }
 
         return holder.binding.root
