@@ -49,10 +49,16 @@ class ReminderListAdapter(context: Context, resource: Int, val items: MutableLis
 
         private val onSnoozeClickListener = OnClickListener {
             val context = adapter.context
+            val use24Hours = DateFormat.is24HourFormat(context)
 
             if (adapter.items[position].begins !== null && adapter.items[position].begins!! > Instant.now().epochSecond) {
-                val locale = Locale.getDefault()
-                val pattern = DateFormat.getBestDateTimePattern(locale, "EEEE, MMM d, yyyy 'at' HH:mm:ss zzz")
+                val format = if (use24Hours) {
+                    "EEEE, MMM d, yyyy 'at' HH:mm:ss zzz"
+                } else {
+                    "EEEE, MMM d, yyyy 'at' hh:mm:ss aaa zzz"
+                }
+
+                val pattern = DateFormat.getBestDateTimePattern(Locale.getDefault(), format)
                 val str = DateFormat.format(pattern, adapter.items[position].begins!! * 1000)
 
                 AlertDialog.Builder(context)
@@ -86,7 +92,7 @@ class ReminderListAdapter(context: Context, resource: Int, val items: MutableLis
                         listener?.onUpdated()
                         notifyDataSetChanged()
                     }
-                }, hour, minute, DateFormat.is24HourFormat(context)).show()
+                }, hour, minute, use24Hours).show()
             }, year, month, day).show()
         }
 
