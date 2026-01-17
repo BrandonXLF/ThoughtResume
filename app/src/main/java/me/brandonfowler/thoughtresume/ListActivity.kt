@@ -1,38 +1,41 @@
 package me.brandonfowler.thoughtresume
 
 import android.app.Activity
+import android.app.AlertDialog
 import android.content.Context
+import android.content.pm.PackageManager
+import android.os.Build
 import android.os.Bundle
 import android.text.Editable
 import android.text.TextWatcher
 import android.view.View
 import android.view.inputmethod.EditorInfo
 import android.view.inputmethod.InputMethodManager
+import androidx.annotation.RequiresApi
+import androidx.core.app.ActivityCompat
 import me.brandonfowler.thoughtresume.databinding.ActivityListBinding
 
 class ListActivity : Activity() {
+    lateinit var reminderStore: ReminderStore
     lateinit var reminderNotification: ReminderNotification
+
     private lateinit var binding: ActivityListBinding
     private lateinit var remindersAdapter: ReminderListAdapter
     private lateinit var inputMethodManager: InputMethodManager
-    val reminders = ArrayList<String>()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
+        reminderStore = ReminderStore(this)
         reminderNotification = ReminderNotification(this)
+
         binding = ActivityListBinding.inflate(layoutInflater)
         inputMethodManager = getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
 
         setContentView(binding.root)
 
-        val reminderList = reminderNotification.text.split("\n")
-
-        if (reminderList.size != 1 || reminderList[0].isNotEmpty())
-            reminders.addAll(reminderList)
-
-        remindersAdapter = ReminderListAdapter(this, R.layout.reminder_listview, reminders)
-        remindersAdapter.setUpdatedListener { update(false) }
+        remindersAdapter = ReminderListAdapter(this, R.layout.reminder_listview, reminderStore.reminders)
+        remindersAdapter.setUpdatedListener { update(notifyAdapter = false) }
 
         binding.reminderList.adapter = remindersAdapter
 
@@ -61,7 +64,7 @@ class ListActivity : Activity() {
             if (reminderText.isEmpty())
                 return@setOnEditorActionListener true
 
-            reminders.add(reminderText)
+            reminderStore.reminders.add(ReminderStore.Reminder(reminderText, null))
             update()
 
             true
@@ -72,19 +75,24 @@ class ListActivity : Activity() {
         }
 
         binding.clearButton.setOnClickListener {
-            reminders.clear()
+            reminderStore.reminders.clear()
             update()
         }
 
-        reminderNotification.update()
-        binding.clearButton.isEnabled = reminders.isNotEmpty()
+        update(notifyAdapter = false, save = false)
     }
 
-    fun update(notifyAdapter: Boolean = true) {
-        reminderNotification.text = reminders.joinToString("\n")
-        binding.clearButton.isEnabled = reminders.isNotEmpty()
+    fun update(notifyAdapter: Boolean = true, save: Boolean = true) {
+        if (save) {
+            reminderStore.save()
+        }
 
-        if (notifyAdapter)
+        val activeReminders = reminderStore.activeReminders
+        reminderNotification.text = activeReminders.joinToString("\n") { it.text }
+        binding.clearButton.isEnabled = activeReminders.isNotEmpty()
+
+        if (notifyAdapter) {
             remindersAdapter.notifyDataSetChanged()
+        }
     }
 }

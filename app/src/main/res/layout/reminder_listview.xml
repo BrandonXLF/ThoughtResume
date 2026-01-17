@@ -8,19 +8,34 @@
     <EditText
         android:id="@+id/editText"
         android:layout_width="0dp"
-        android:layout_margin="0dp"
         android:layout_height="wrap_content"
+        android:layout_margin="0dp"
         android:backgroundTint="?colorSecondary"
-        android:imeOptions="actionDone"
-        android:inputType="textCapSentences"
         android:gravity="center_vertical"
         android:hint="@string/edit_reminder"
+        android:imeOptions="actionDone"
         android:importantForAutofill="no"
-        app:layout_constraintWidth_min="80dp"
+        android:inputType="textCapSentences"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toStartOf="@id/snoozeButton"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintWidth_min="80dp" />
+
+    <ImageButton
+        android:id="@+id/snoozeButton"
+        android:layout_width="32dp"
+        android:layout_height="48dp"
+        android:paddingVertical="16dp"
+        android:paddingHorizontal="8dp"
+        android:background="@android:color/transparent"
+        android:gravity="center_vertical"
+        android:src="@drawable/snooze_icon"
+        android:contentDescription="@string/snooze_reminder"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toStartOf="@id/deleteButton" />
+        app:layout_constraintEnd_toEndOf="@id/deleteButton"
+        app:layout_constraintStart_toEndOf="@id/editText" />
 
     <ImageButton
         android:id="@+id/deleteButton"
@@ -35,5 +50,5 @@
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toEndOf="@id/editText" />
+        app:layout_constraintStart_toEndOf="@id/snoozeButton" />
 </androidx.constraintlayout.widget.ConstraintLayout>

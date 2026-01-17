@@ -8,4 +8,8 @@
     <string name="edit_reminder">Edit reminder</string>
     <string name="submit_reminder">Submit reminder</string>
     <string name="delete_reminder">Delete reminder</string>
+    <string name="snooze_reminder">Snooze reminder</string>
+    <string name="snoozed_until">Snoozed until</string>
+    <string name="unsnooze">Unsnooze</string>
+    <string name="load_failed">Failed to load stored reminders</string>
 </resources>

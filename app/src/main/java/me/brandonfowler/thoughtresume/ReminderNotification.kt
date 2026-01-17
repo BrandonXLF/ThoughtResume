@@ -11,10 +11,8 @@ class ReminderNotification(context: Context) {
     companion object {
         const val RESUME_CHANNEL = "RESUME"
         const val RESUME_NOTIFICATION = 1
-        const val NOTIFICATION_PREFERENCES = "notification"
     }
 
-    private val preferences = context.getSharedPreferences(NOTIFICATION_PREFERENCES, Context.MODE_PRIVATE)
     private val intent = Intent(context, ListActivity::class.java)
     private val pendingIntent = PendingIntent.getActivity(context, 0, intent, PendingIntent.FLAG_IMMUTABLE)
     private val manager = context.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
@@ -26,23 +24,17 @@ class ReminderNotification(context: Context) {
         .setOngoing(true)
         .setOnlyAlertOnce(true)
 
-    private var _text: String = preferences.getString("reminders", "") as String
+    private var _text: String = ""
 
     var text: String
         get() = _text
         set(text) {
             _text = text
             update()
-
-            with (preferences.edit()) {
-                putString("reminders", text)
-                apply()
-            }
         }
 
-    var shown: Boolean
+    val shown: Boolean
         get() = text.isNotEmpty()
-        private set(_) { }
 
     init {
         manager.createNotificationChannel(
