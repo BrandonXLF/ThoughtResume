@@ -53,9 +53,9 @@ class ReminderListAdapter(context: Context, resource: Int, val items: MutableLis
 
             if (isSnoozed()) {
                 val format = if (use24Hours) {
-                    "EEEE, MMM d, yyyy 'at' HH:mm:ss zzz"
+                    "EEEE, MMM d, yyyy 'at' HH:mm zzz"
                 } else {
-                    "EEEE, MMM d, yyyy 'at' hh:mm:ss aaa zzz"
+                    "EEEE, MMM d, yyyy 'at' hh:mm aaa zzz"
                 }
 
                 val pattern = DateFormat.getBestDateTimePattern(Locale.getDefault(), format)
@@ -85,7 +85,7 @@ class ReminderListAdapter(context: Context, resource: Int, val items: MutableLis
 
             DatePickerDialog(context, { _, year, month, day ->
                 TimePickerDialog(context, { _, hour, min ->
-                    c.set(year, month, day, hour, min)
+                    c.set(year, month, day, hour, min, 0)
 
                     with (adapter) {
                         items[position].begins = c.timeInMillis / 1000L
