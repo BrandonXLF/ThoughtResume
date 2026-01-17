@@ -81,6 +81,11 @@ class ListActivity : Activity() {
         update(notifyAdapter = false, save = false)
     }
 
+    override fun onResume() {
+        super.onResume()
+        update(notifyAdapter = false, save = false)
+    }
+
     fun update(notifyAdapter: Boolean = true, save: Boolean = true) {
         if (save) {
             reminderStore.save()
