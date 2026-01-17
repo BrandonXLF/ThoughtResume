@@ -16,9 +16,9 @@ class ReminderStore(context: Context) {
 
     private val preferences = context.getSharedPreferences(NOTIFICATION_PREFERENCES, Context.MODE_PRIVATE)
 
-    class Reminder(var text: String, var begins: Long?) {}
+    class Reminder(var text: String, var begins: Long?)
 
-    lateinit var reminders: MutableList<Reminder>;
+    lateinit var reminders: MutableList<Reminder>
 
     val activeReminders: List<Reminder>
         get() {
@@ -27,8 +27,8 @@ class ReminderStore(context: Context) {
         }
 
     init {
-        val version = preferences.getInt("version", 1);
-        val data = preferences.getString("reminders", "")!!;
+        val version = preferences.getInt("version", 1)
+        val data = preferences.getString("reminders", "")!!
 
         when (version) {
             1 -> reminders = data.split("\n").map { Reminder(it, null) }.toMutableList()
