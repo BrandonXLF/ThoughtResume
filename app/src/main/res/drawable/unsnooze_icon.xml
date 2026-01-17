@@ -3,7 +3,8 @@
     android:width="16dp"
     android:height="16dp"
     android:viewportWidth="18"
-    android:viewportHeight="18" >
+    android:viewportHeight="18"
+    >
 
     <group
         android:translateX="-3"
@@ -29,12 +30,6 @@
 
         <path
             android:pathData="M10 13h4"
-            android:strokeColor="?colorOnBackground"
-            android:strokeWidth="2"
-            android:strokeLineCap="round" />
-
-        <path
-            android:pathData="M12 11v4"
             android:strokeColor="?colorOnBackground"
             android:strokeWidth="2"
             android:strokeLineCap="round" />

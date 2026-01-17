@@ -51,7 +51,7 @@ class ReminderListAdapter(context: Context, resource: Int, val items: MutableLis
             val context = adapter.context
             val use24Hours = DateFormat.is24HourFormat(context)
 
-            if (adapter.items[position].begins !== null && adapter.items[position].begins!! > Instant.now().epochSecond) {
+            if (isSnoozed()) {
                 val format = if (use24Hours) {
                     "EEEE, MMM d, yyyy 'at' HH:mm:ss zzz"
                 } else {
@@ -101,11 +101,26 @@ class ReminderListAdapter(context: Context, resource: Int, val items: MutableLis
             binding.editText.addTextChangedListener(textWatcher)
             binding.deleteButton.setOnClickListener(onDeleteClickListener)
             binding.snoozeButton.setOnClickListener(onSnoozeClickListener)
+            setStyle()
+        }
+
+        private fun isSnoozed(): Boolean {
+            return adapter.items[position].begins !== null && adapter.items[position].begins!! > Instant.now().epochSecond;
+        }
+
+        private fun setStyle() {
+            val snoozed = isSnoozed()
+
+            binding.editText.alpha = if (snoozed) 0.65F else 1F
+            binding.snoozeButton.setImageResource(if (snoozed) R.drawable.unsnooze_icon else R.drawable.snooze_icon)
+            binding.snoozeButton.contentDescription =
+                adapter.context.getString(if (snoozed) R.string.snooze_reminder else R.string.unsnooze_reminder)
         }
 
         fun updateValue(position: Int) {
             this.position = position
             binding.editText.setText(adapter.items[position].text)
+            setStyle()
         }
     }
 
