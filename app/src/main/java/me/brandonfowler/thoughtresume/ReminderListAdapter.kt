@@ -13,6 +13,7 @@ import android.view.View.OnClickListener
 import android.view.ViewGroup
 import android.widget.ArrayAdapter
 import me.brandonfowler.thoughtresume.databinding.ReminderListviewBinding
+import java.time.Instant
 import java.util.Calendar
 import java.util.Locale
 
@@ -49,7 +50,7 @@ class ReminderListAdapter(context: Context, resource: Int, val items: MutableLis
         private val onSnoozeClickListener = OnClickListener {
             val context = adapter.context
 
-            if (adapter.items[position].begins !== null) {
+            if (adapter.items[position].begins !== null && adapter.items[position].begins!! > Instant.now().epochSecond) {
                 val locale = Locale.getDefault()
                 val pattern = DateFormat.getBestDateTimePattern(locale, "EEEE, MMM d, yyyy 'at' HH:mm:ss zzz")
                 val str = DateFormat.format(pattern, adapter.items[position].begins!! * 1000)
