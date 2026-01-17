@@ -16,12 +16,18 @@ import androidx.core.app.ActivityCompat
 import me.brandonfowler.thoughtresume.databinding.ActivityListBinding
 
 class ListActivity : Activity() {
+    companion object {
+        const val NOTIFICATION_PERMISSION_REQUEST_CODE = 50
+    }
+
     lateinit var reminderStore: ReminderStore
     lateinit var reminderNotification: ReminderNotification
 
     private lateinit var binding: ActivityListBinding
     private lateinit var remindersAdapter: ReminderListAdapter
     private lateinit var inputMethodManager: InputMethodManager
+
+    private var notificationPermissionDialog: AlertDialog? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -82,11 +88,6 @@ class ListActivity : Activity() {
         update(notifyAdapter = false, save = false)
     }
 
-    override fun onResume() {
-        super.onResume()
-        update(notifyAdapter = false, save = false)
-    }
-
     @RequiresApi(Build.VERSION_CODES.TIRAMISU)
     private fun requestNotificationPermission() {
         if (checkSelfPermission(android.Manifest.permission.POST_NOTIFICATIONS) != PackageManager.PERMISSION_GRANTED) {
@@ -95,19 +96,34 @@ class ListActivity : Activity() {
                     android.Manifest.permission.POST_NOTIFICATIONS
                 )
             ) {
-                AlertDialog.Builder(this)
-                    .setMessage(R.string.permission_reason)
-                    .setNegativeButton(R.string.permission_skip) { _, _ -> }
-                    .setPositiveButton(R.string.permission_allow) { _, _ ->
-                        requestPermissions(
+                if (notificationPermissionDialog == null) {
+                    notificationPermissionDialog = AlertDialog.Builder(this)
+                        .setMessage(R.string.permission_reason)
+                        .setPositiveButton(R.string.ok) { dialog, _ -> requestPermissions(
                             arrayOf(android.Manifest.permission.POST_NOTIFICATIONS),
-                            0
-                        )
-                    }
-                    .show()
+                            NOTIFICATION_PERMISSION_REQUEST_CODE
+                        ) }
+                        .create()
+                }
+
+                notificationPermissionDialog!!.show()
             } else {
-                requestPermissions(arrayOf(android.Manifest.permission.POST_NOTIFICATIONS), 0)
+                requestPermissions(
+                    arrayOf(android.Manifest.permission.POST_NOTIFICATIONS),
+                    NOTIFICATION_PERMISSION_REQUEST_CODE
+                )
             }
+        }
+    }
+
+    override fun onRequestPermissionsResult(
+        requestCode: Int,
+        permissions: Array<out String>,
+        grantResults: IntArray
+    ) {
+        if (requestCode == NOTIFICATION_PERMISSION_REQUEST_CODE) {
+            notificationPermissionDialog?.dismiss()
+            update(notifyAdapter = false, save = false)
         }
     }
 
@@ -117,7 +133,7 @@ class ListActivity : Activity() {
         }
 
         val activeReminders = reminderStore.activeReminders
-        reminderNotification.text = activeReminders.joinToString("\n") { it.text }
+        reminderNotification.setReminders(activeReminders)
         binding.clearButton.isEnabled = activeReminders.isNotEmpty()
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {

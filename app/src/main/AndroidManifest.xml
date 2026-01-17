@@ -21,12 +21,13 @@
         </activity>
 
         <receiver
-            android:name=".BootReceiver"
+            android:name=".ShowNotificationReceiver"
             android:enabled="true"
             android:exported="true">
 
             <intent-filter>
                 <action android:name="android.intent.action.BOOT_COMPLETED" />
+                <action android:name="me.brandonfowler.thoughtresume.NOTIFICATION_CANCELLED" />
             </intent-filter>
         </receiver>
     </application>

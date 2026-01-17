@@ -6,6 +6,7 @@ import android.app.NotificationManager
 import android.app.PendingIntent
 import android.content.Context
 import android.content.Intent
+import android.net.Uri
 
 class ReminderNotification(context: Context) {
     companion object {
@@ -13,9 +14,11 @@ class ReminderNotification(context: Context) {
         const val RESUME_NOTIFICATION = 1
     }
 
+    private val manager = context.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
     private val intent = Intent(context, ListActivity::class.java)
     private val pendingIntent = PendingIntent.getActivity(context, 0, intent, PendingIntent.FLAG_IMMUTABLE)
-    private val manager = context.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
+    private val deleteIntent = Intent(ShowNotificationReceiver.NOTIFICATION_DELETED, Uri.EMPTY, context, ShowNotificationReceiver::class.java)
+    private val pendingDeleteIntent = PendingIntent.getBroadcast(context, 0, deleteIntent, PendingIntent.FLAG_IMMUTABLE or PendingIntent.FLAG_CANCEL_CURRENT)
 
     private val builder = Notification.Builder(context, RESUME_CHANNEL)
         .setSmallIcon(R.drawable.notification_icon)
@@ -23,18 +26,11 @@ class ReminderNotification(context: Context) {
         .setContentIntent(pendingIntent)
         .setOngoing(true)
         .setOnlyAlertOnce(true)
+        .setDeleteIntent(pendingDeleteIntent)
 
-    private var _text: String = ""
+    private var text: String = ""
 
-    var text: String
-        get() = _text
-        set(text) {
-            _text = text
-            update()
-        }
-
-    val shown: Boolean
-        get() = text.isNotEmpty()
+    val shown: Boolean get() = text.isNotEmpty()
 
     init {
         manager.createNotificationChannel(
@@ -46,7 +42,12 @@ class ReminderNotification(context: Context) {
         )
     }
 
-    fun update() {
+    fun setReminders(reminders: List<ReminderStore.Reminder>) {
+        text = reminders.joinToString("\n") { it.text }
+        show()
+    }
+
+    fun show() {
         if (!shown) {
             manager.cancel(RESUME_NOTIFICATION)
             return
