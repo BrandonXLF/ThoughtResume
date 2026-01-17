@@ -6,11 +6,11 @@ import android.content.Intent
 
 class ShowNotificationReceiver : BroadcastReceiver() {
     companion object {
-        const val NOTIFICATION_DELETED = "me.brandonfowler.thoughtresume.NOTIFICATION_CANCELLED"
+        const val NOTIFICATION_CANCELLED = "me.brandonfowler.thoughtresume.NOTIFICATION_CANCELLED"
     }
 
     override fun onReceive(context: Context, intent: Intent) {
-        if (intent.action != Intent.ACTION_BOOT_COMPLETED && intent.action != NOTIFICATION_DELETED) return
+        if (intent.action != Intent.ACTION_BOOT_COMPLETED && intent.action != NOTIFICATION_CANCELLED) return
 
         val reminderStore = ReminderStore(context)
         val reminderNotification = ReminderNotification(context)

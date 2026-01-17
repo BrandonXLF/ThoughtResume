@@ -17,7 +17,7 @@ class ReminderNotification(context: Context) {
     private val manager = context.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
     private val intent = Intent(context, ListActivity::class.java)
     private val pendingIntent = PendingIntent.getActivity(context, 0, intent, PendingIntent.FLAG_IMMUTABLE)
-    private val deleteIntent = Intent(ShowNotificationReceiver.NOTIFICATION_DELETED, Uri.EMPTY, context, ShowNotificationReceiver::class.java)
+    private val deleteIntent = Intent(ShowNotificationReceiver.NOTIFICATION_CANCELLED, Uri.EMPTY, context, ShowNotificationReceiver::class.java)
     private val pendingDeleteIntent = PendingIntent.getBroadcast(context, 0, deleteIntent, PendingIntent.FLAG_IMMUTABLE or PendingIntent.FLAG_CANCEL_CURRENT)
 
     private val builder = Notification.Builder(context, RESUME_CHANNEL)
