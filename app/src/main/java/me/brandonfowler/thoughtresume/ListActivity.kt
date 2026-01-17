@@ -11,6 +11,7 @@ import android.text.TextWatcher
 import android.view.View
 import android.view.inputmethod.EditorInfo
 import android.view.inputmethod.InputMethodManager
+import androidx.annotation.RequiresApi
 import androidx.core.app.ActivityCompat
 import me.brandonfowler.thoughtresume.databinding.ActivityListBinding
 
@@ -86,6 +87,30 @@ class ListActivity : Activity() {
         update(notifyAdapter = false, save = false)
     }
 
+    @RequiresApi(Build.VERSION_CODES.TIRAMISU)
+    private fun requestNotificationPermission() {
+        if (checkSelfPermission(android.Manifest.permission.POST_NOTIFICATIONS) != PackageManager.PERMISSION_GRANTED) {
+            if (ActivityCompat.shouldShowRequestPermissionRationale(
+                    this,
+                    android.Manifest.permission.POST_NOTIFICATIONS
+                )
+            ) {
+                AlertDialog.Builder(this)
+                    .setMessage(R.string.permission_reason)
+                    .setNegativeButton(R.string.permission_skip) { _, _ -> }
+                    .setPositiveButton(R.string.permission_allow) { _, _ ->
+                        requestPermissions(
+                            arrayOf(android.Manifest.permission.POST_NOTIFICATIONS),
+                            0
+                        )
+                    }
+                    .show()
+            } else {
+                requestPermissions(arrayOf(android.Manifest.permission.POST_NOTIFICATIONS), 0)
+            }
+        }
+    }
+
     fun update(notifyAdapter: Boolean = true, save: Boolean = true) {
         if (save) {
             reminderStore.save()
@@ -95,19 +120,8 @@ class ListActivity : Activity() {
         reminderNotification.text = activeReminders.joinToString("\n") { it.text }
         binding.clearButton.isEnabled = activeReminders.isNotEmpty()
 
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU &&
-            checkSelfPermission(android.Manifest.permission.POST_NOTIFICATIONS) != PackageManager.PERMISSION_GRANTED) {
-            if (ActivityCompat.shouldShowRequestPermissionRationale(this, android.Manifest.permission.POST_NOTIFICATIONS)) {
-                AlertDialog.Builder(this)
-                    .setMessage(R.string.permission_reason)
-                    .setNegativeButton(R.string.permission_skip) { _, _ -> }
-                    .setPositiveButton(R.string.permission_allow) { _, _ ->
-                        requestPermissions(arrayOf(android.Manifest.permission.POST_NOTIFICATIONS), 0)
-                    }
-                    .show()
-            } else {
-                requestPermissions(arrayOf(android.Manifest.permission.POST_NOTIFICATIONS), 0)
-            }
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+            this.requestNotificationPermission()
         }
 
         if (notifyAdapter) {
