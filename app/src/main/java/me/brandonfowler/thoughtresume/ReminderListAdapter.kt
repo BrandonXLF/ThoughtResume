@@ -13,8 +13,8 @@ import android.view.View.OnClickListener
 import android.view.ViewGroup
 import android.widget.ArrayAdapter
 import me.brandonfowler.thoughtresume.databinding.ReminderListviewBinding
-import java.time.Instant
 import java.util.Calendar
+import java.util.Locale
 
 class ReminderListAdapter(context: Context, resource: Int, val items: MutableList<ReminderStore.Reminder>)
     : ArrayAdapter<ReminderStore.Reminder>(context, resource, items) {
@@ -50,11 +50,14 @@ class ReminderListAdapter(context: Context, resource: Int, val items: MutableLis
             val context = adapter.context
 
             if (adapter.items[position].begins !== null) {
-                val i = Instant.ofEpochSecond(adapter.items[position].begins!!);
+                val locale = Locale.getDefault()
+                val pattern = DateFormat.getBestDateTimePattern(locale, "EEEE, MMM d, yyyy 'at' HH:mm:ss zzz")
+                val str = DateFormat.format(pattern, adapter.items[position].begins!! * 1000)
 
                 AlertDialog.Builder(context)
-                    .setMessage(context.getString(R.string.snoozed_until) + " $i")
-                    .setNegativeButton(R.string.unsnooze) { dialog, which ->
+                    .setMessage(context.getString(R.string.snoozed_until) + " " + str)
+                    .setNeutralButton(R.string.ok) { _, _ -> }
+                    .setNegativeButton(R.string.unsnooze) { _, _ ->
                         with(adapter) {
                             items[position].begins = null
                             listener?.onUpdated()

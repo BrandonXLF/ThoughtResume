@@ -11,7 +11,6 @@ import android.text.TextWatcher
 import android.view.View
 import android.view.inputmethod.EditorInfo
 import android.view.inputmethod.InputMethodManager
-import androidx.annotation.RequiresApi
 import androidx.core.app.ActivityCompat
 import me.brandonfowler.thoughtresume.databinding.ActivityListBinding
 

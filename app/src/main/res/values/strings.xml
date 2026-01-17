@@ -15,4 +15,5 @@
     <string name="permission_reason">Permission is required to show your active reminders in a persistent notification.</string>
     <string name="permission_skip">Skip</string>
     <string name="permission_allow">Allow</string>
+    <string name="ok">OK</string>
 </resources>
