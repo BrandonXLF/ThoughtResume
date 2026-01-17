@@ -91,6 +91,21 @@ class ListActivity : Activity() {
         reminderNotification.text = activeReminders.joinToString("\n") { it.text }
         binding.clearButton.isEnabled = activeReminders.isNotEmpty()
 
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU &&
+            checkSelfPermission(android.Manifest.permission.POST_NOTIFICATIONS) != PackageManager.PERMISSION_GRANTED) {
+            if (ActivityCompat.shouldShowRequestPermissionRationale(this, android.Manifest.permission.POST_NOTIFICATIONS)) {
+                AlertDialog.Builder(this)
+                    .setMessage(R.string.permission_reason)
+                    .setNegativeButton(R.string.permission_skip) { _, _ -> }
+                    .setPositiveButton(R.string.permission_allow) { _, _ ->
+                        requestPermissions(arrayOf(android.Manifest.permission.POST_NOTIFICATIONS), 0)
+                    }
+                    .show()
+            } else {
+                requestPermissions(arrayOf(android.Manifest.permission.POST_NOTIFICATIONS), 0)
+            }
+        }
+
         if (notifyAdapter) {
             remindersAdapter.notifyDataSetChanged()
         }

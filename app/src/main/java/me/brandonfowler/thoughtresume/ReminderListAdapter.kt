@@ -73,8 +73,8 @@ class ReminderListAdapter(context: Context, resource: Int, val items: MutableLis
             val hour = c.get(Calendar.HOUR_OF_DAY)
             val minute = c.get(Calendar.MINUTE)
 
-            DatePickerDialog(context, { view, year, month, day ->
-                TimePickerDialog(context, { view, hour, min ->
+            DatePickerDialog(context, { _, year, month, day ->
+                TimePickerDialog(context, { _, hour, min ->
                     c.set(year, month, day, hour, min)
 
                     with (adapter) {
