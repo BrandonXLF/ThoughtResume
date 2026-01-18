@@ -32,9 +32,13 @@ class ReminderListAdapter(context: Context, resource: Int, val items: MutableLis
             override fun beforeTextChanged(s: CharSequence, start: Int, end: Int, count: Int) { }
 
             override fun onTextChanged(s: CharSequence, start: Int, end: Int, count: Int) {
+                val text = s.toString()
+
                 with (adapter) {
-                    items[position].text = s.toString()
-                    listener?.onUpdated()
+                    if (items[position].text != text) {
+                        items[position].text = text
+                        listener?.onUpdated()
+                    }
                 }
             }
         }
