@@ -28,8 +28,8 @@ class ListActivity : Activity() {
     }
 
     lateinit var reminderStore: ReminderStore
-    lateinit var reminderNotification: ReminderNotification
 
+    private lateinit var reminderNotification: ReminderNotification
     private lateinit var binding: ActivityListBinding
     private lateinit var remindersAdapter: ReminderListAdapter
     private lateinit var inputMethodManager: InputMethodManager

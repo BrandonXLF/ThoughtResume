@@ -1,27 +1,34 @@
 package me.brandonfowler.thoughtresume
 
+import android.Manifest
 import android.app.Notification
 import android.app.NotificationManager
 import android.content.Context
 import androidx.test.espresso.Espresso.onView
-import androidx.test.espresso.action.ViewActions.*
+import androidx.test.espresso.action.ViewActions.click
+import androidx.test.espresso.action.ViewActions.pressImeActionButton
+import androidx.test.espresso.action.ViewActions.replaceText
 import androidx.test.espresso.matcher.ViewMatchers.withId
 import androidx.test.ext.junit.rules.ActivityScenarioRule
 import androidx.test.ext.junit.runners.AndroidJUnit4
-import org.junit.*
-import org.junit.Assert.*
+import androidx.test.rule.GrantPermissionRule
+import org.junit.Assert.assertEquals
+import org.junit.Before
+import org.junit.Rule
+import org.junit.Test
 import org.junit.runner.RunWith
 
-
 @RunWith(AndroidJUnit4::class) class ListActivityTest {
-    private lateinit var manager: NotificationManager
     @get:Rule val activityRule = ActivityScenarioRule(ListActivity::class.java)
+    @get:Rule var permissionRule: GrantPermissionRule = GrantPermissionRule.grant(Manifest.permission.POST_NOTIFICATIONS)
+
+    private lateinit var manager: NotificationManager
 
     @Before fun setUp() {
         activityRule.scenario.onActivity { activity ->
             manager = activity.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
 
-            activity.reminders.clear()
+            activity.reminderStore.reminders.clear()
             activity.update()
         }
     }
@@ -51,10 +58,6 @@ import org.junit.runner.RunWith
     }
 
     @Test fun multipleItemsAdded() {
-        activityRule.scenario.onActivity { activity ->
-            activity.reminderNotification.text = ""
-        }
-
         onView(withId(R.id.reminderText)).perform(
             replaceText("Test resume"),
             pressImeActionButton(),
@@ -76,7 +79,13 @@ import org.junit.runner.RunWith
     }
 
     @Test fun clearButtonPressed() {
-        onView(withId(R.id.reminderText)).perform(replaceText("Test resume"), pressImeActionButton())
+        onView(withId(R.id.reminderText)).perform(
+            replaceText("Test resume"),
+            pressImeActionButton()
+        )
+
+        assertEquals(1, manager.activeNotifications.size)
+
         onView(withId(R.id.clearButton)).perform(click())
 
         assertEquals(0, manager.activeNotifications.size)
