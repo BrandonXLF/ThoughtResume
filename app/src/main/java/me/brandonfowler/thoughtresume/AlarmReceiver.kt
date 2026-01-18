@@ -4,12 +4,12 @@ import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
 
-class ShowNotificationReceiver : BroadcastReceiver() {
+class AlarmReceiver : BroadcastReceiver() {
     override fun onReceive(context: Context, intent: Intent) {
-        if (intent.action != Intent.ACTION_BOOT_COMPLETED && intent.action != null) return
-
         val reminderStore = ReminderStore(context)
         val reminderNotification = ReminderNotification(context)
-        reminderNotification.setReminders(reminderStore.activeReminders)
+        reminderNotification.setReminders(reminderStore.activeReminders, true)
+
+        context.applicationContext.sendBroadcast(Intent(ListActivity.UPDATE_LIST_UI));
     }
 }

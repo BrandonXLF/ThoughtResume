@@ -17,14 +17,17 @@ class ReminderStore(context: Context) {
     private val preferences = context.getSharedPreferences(NOTIFICATION_PREFERENCES, Context.MODE_PRIVATE)
 
     class Reminder(var text: String, var begins: Long?)
-
     lateinit var reminders: MutableList<Reminder>
 
-    val activeReminders: List<Reminder>
-        get() {
-            val now = Instant.now().epochSecond
-            return reminders.filter { it.begins === null || it.begins!! <= now }
-        }
+    val activeReminders: List<Reminder> get() {
+        val now = Instant.now().epochSecond
+        return reminders.filter { it.begins == null || it.begins!! <= now }
+    }
+
+    val inactiveReminders: List<Reminder> get() {
+        val now = Instant.now().epochSecond
+        return reminders.filter { it.begins != null && it.begins!! > now }
+    }
 
     init {
         val version = preferences.getInt("version", 1)
