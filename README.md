@@ -12,4 +12,4 @@ Thought Resume is available for Android.
 
 ## Screenshot
 
-![Screenshot](media/screenshot.jpg)
+![Screenshot](media/screenshot.png)
