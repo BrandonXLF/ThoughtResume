@@ -56,11 +56,11 @@ class ReminderListAdapter(context: Context, resource: Int, val items: MutableLis
         }
 
         init {
-            binding.editText.setText(adapter.items[position].text)
             binding.editText.addTextChangedListener(textWatcher)
             binding.deleteButton.setOnClickListener(onDeleteClickListener)
             binding.snoozeButton.setOnClickListener(onSnoozeClickListener)
-            setStyle()
+
+            populate()
         }
 
         private fun editSnooze() {
@@ -118,7 +118,11 @@ class ReminderListAdapter(context: Context, resource: Int, val items: MutableLis
             return adapter.items[position].begins !== null && adapter.items[position].begins!! > Instant.now().epochSecond;
         }
 
-        private fun setStyle() {
+        private fun populate() {
+            if (binding.editText.text.toString() != adapter.items[this.position].text) {
+                binding.editText.setText(adapter.items[this.position].text)
+            }
+
             val snoozed = isSnoozed()
 
             binding.editText.alpha = if (snoozed) 0.65F else 1F
@@ -127,10 +131,9 @@ class ReminderListAdapter(context: Context, resource: Int, val items: MutableLis
                 adapter.context.getString(if (snoozed) R.string.snooze_reminder else R.string.unsnooze_reminder)
         }
 
-        fun updateValue(position: Int) {
-            this.position = position
-            binding.editText.setText(adapter.items[position].text)
-            setStyle()
+        fun reuse(newPosition: Int) {
+            this.position = newPosition
+            populate()
         }
     }
 
@@ -145,7 +148,7 @@ class ReminderListAdapter(context: Context, resource: Int, val items: MutableLis
             holder.binding.root.tag = holder
         } else {
             holder = convertView.tag as ViewHolder
-            holder.updateValue(position)
+            holder.reuse(position)
         }
 
         return holder.binding.root
