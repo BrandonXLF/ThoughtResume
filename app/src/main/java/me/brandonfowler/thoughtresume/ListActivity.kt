@@ -128,10 +128,12 @@ class ListActivity : Activity() {
                 if (notificationPermissionDialog == null) {
                     notificationPermissionDialog = AlertDialog.Builder(this)
                         .setMessage(R.string.permission_reason)
-                        .setPositiveButton(R.string.ok) { _, _ -> requestPermissions(
-                            arrayOf(android.Manifest.permission.POST_NOTIFICATIONS),
-                            NOTIFICATION_PERMISSION_REQUEST_CODE
-                        ) }
+                        .setPositiveButton(R.string.ok) { _, _ ->
+                            requestPermissions(
+                                arrayOf(android.Manifest.permission.POST_NOTIFICATIONS),
+                                NOTIFICATION_PERMISSION_REQUEST_CODE
+                            )
+                        }
                         .create()
                 }
 

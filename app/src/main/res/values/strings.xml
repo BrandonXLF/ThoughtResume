@@ -12,6 +12,8 @@
     <string name="unsnooze_reminder">Unsnooze reminder…</string>
     <string name="snoozed_until">Snoozed until</string>
     <string name="unsnooze">Unsnooze</string>
+    <string name="keep">Keep</string>
+    <string name="edit">Edit</string>
     <string name="load_failed">Failed to load stored reminders</string>
     <string name="permission_reason">Permission is required to show your active reminders in a persistent notification.</string>
     <string name="ok">OK</string>

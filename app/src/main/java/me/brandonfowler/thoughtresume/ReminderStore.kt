@@ -43,6 +43,7 @@ class ReminderStore(context: Context) {
                 } catch (e: Exception) {
                     AlertDialog.Builder(context)
                         .setMessage(context.getString(R.string.load_failed) + "\n\n" + e.message)
+                        .setPositiveButton(R.string.ok) { _, _ -> }
                         .show()
                     reminders = mutableListOf()
                 } finally {

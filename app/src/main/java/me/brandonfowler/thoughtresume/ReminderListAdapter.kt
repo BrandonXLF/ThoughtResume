@@ -52,35 +52,49 @@ class ReminderListAdapter(context: Context, resource: Int, val items: MutableLis
         }
 
         private val onSnoozeClickListener = OnClickListener {
+            if (isSnoozed()) editSnooze() else addSnooze()
+        }
+
+        init {
+            binding.editText.setText(adapter.items[position].text)
+            binding.editText.addTextChangedListener(textWatcher)
+            binding.deleteButton.setOnClickListener(onDeleteClickListener)
+            binding.snoozeButton.setOnClickListener(onSnoozeClickListener)
+            setStyle()
+        }
+
+        private fun editSnooze() {
             val context = adapter.context
-            val use24Hours = DateFormat.is24HourFormat(context)
-
-            if (isSnoozed()) {
-                val format = if (use24Hours) {
-                    "EEEE, MMM d, yyyy 'at' HH:mm zzz"
-                } else {
-                    "EEEE, MMM d, yyyy 'at' hh:mm aaa zzz"
-                }
-
-                val pattern = DateFormat.getBestDateTimePattern(Locale.getDefault(), format)
-                val str = DateFormat.format(pattern, adapter.items[position].begins!! * 1000)
-
-                AlertDialog.Builder(context)
-                    .setMessage(context.getString(R.string.snoozed_until) + " " + str)
-                    .setNeutralButton(R.string.ok) { _, _ -> }
-                    .setNegativeButton(R.string.unsnooze) { _, _ ->
-                        with(adapter) {
-                            items[position].begins = null
-                            listener?.onUpdated()
-                            notifyDataSetChanged()
-                        }
-                    }
-                    .show()
-
-                return@OnClickListener
+            val format = if (DateFormat.is24HourFormat(context)) {
+                "EEEE, MMM d, yyyy 'at' HH:mm zzz"
+            } else {
+                "EEEE, MMM d, yyyy 'at' hh:mm aaa zzz"
             }
+            val pattern = DateFormat.getBestDateTimePattern(Locale.getDefault(), format)
+            val timeInMillis = adapter.items[position].begins!! * 1000
+            val str = DateFormat.format(pattern, timeInMillis)
 
-            val c = Calendar.getInstance()
+            AlertDialog.Builder(context)
+                .setMessage(context.getString(R.string.snoozed_until) + " " + str)
+                .setPositiveButton(R.string.unsnooze) { _, _ ->
+                    with(adapter) {
+                        items[position].begins = null
+                        listener?.onUpdated()
+                        notifyDataSetChanged()
+                    }
+                }
+                .setNeutralButton(R.string.edit) { _, _ ->
+                    val c = Calendar.getInstance()
+                    c.timeInMillis = timeInMillis
+                    addSnooze(c)
+                }
+                .setNegativeButton(R.string.keep) { _, _ -> }
+                .show()
+        }
+
+        private fun addSnooze(c: Calendar = Calendar.getInstance()) {
+            val context = adapter.context
+
             val year = c.get(Calendar.YEAR)
             val month = c.get(Calendar.MONTH)
             val day = c.get(Calendar.DAY_OF_MONTH)
@@ -96,16 +110,8 @@ class ReminderListAdapter(context: Context, resource: Int, val items: MutableLis
                         listener?.onUpdated()
                         notifyDataSetChanged()
                     }
-                }, hour, minute, use24Hours).show()
+                }, hour, minute, DateFormat.is24HourFormat(context)).show()
             }, year, month, day).show()
-        }
-
-        init {
-            binding.editText.setText(adapter.items[position].text)
-            binding.editText.addTextChangedListener(textWatcher)
-            binding.deleteButton.setOnClickListener(onDeleteClickListener)
-            binding.snoozeButton.setOnClickListener(onSnoozeClickListener)
-            setStyle()
         }
 
         private fun isSnoozed(): Boolean {
